@@ -1,0 +1,28 @@
+body {
+ background-color: #8888FF;
+}
+
+#header-block{
+ font-family:16px Helvetica, sans-serif;
+ color: #FFFFFF;
+ background-color: #0000A0;
+ border: 2px ridge #0000F0;
+}
+
+#calender-block{
+ float: left;
+ width: 60%;
+ background-color: FFFFFF;
+ border: 2px ridge #0000F0;
+ padding: 4px;
+ margin-right: 4px;
+}
+
+#entry-block{
+ float: right;
+ width: 35%;
+ background-color: FFFFFF;
+ border: 2px ridge #0000F0;
+ padding: 4px;
+ margin-right: 4px;
+}

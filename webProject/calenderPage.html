@@ -1,0 +1,91 @@
+<html>
+
+	<head>
+		<title>Shifted</title>
+		<link rel="stylesheet" type="text/css" media="screen" href="layout.css"/>
+	</head>
+
+<script type="text/javascript">
+function displayResult()
+{
+	var shiftName=document.getElementById("shiftNameInput").value;
+	var sTime=document.getElementById("startTimeInput").value;
+	var sTc=document.getElementById("stc").value;
+	var eTime=document.getElementById("endTimeInput").value;
+	var eTc=document.getElementById("etc").value;
+	var mo=document.getElementById("mon").checked;
+	var tu=document.getElementById("tue").checked;
+	var we=document.getElementById("wed").checked;
+	var th=document.getElementById("thu").checked;
+	var fr=document.getElementById("fri").checked;
+	var sa=document.getElementById("sat").checked;
+	var su=document.getElementById("sun").checked;
+	var staffNum=document.getElementById("staffNumberInput").value;
+
+	var response = "";
+	var timePatt = /[0-1]?[0-9]:[0-5][0-9]/i;
+	timePatt.compile(timePatt);
+
+	if (sTime == "" || eTime == "" || timePatt.test(sTime) == false || timePatt.test(eTime) == false) {
+		alert("please input correct time values\nformat: 01 - 12 : 00 - 59");
+	}
+	
+	else {
+		alert("Shift Name: " + shiftName + "\n" + "Number of Staff: " + staffNum + "\n" + "When: " + sTime + sTc + "-" + eTime + eTc + "\nOn: " + mo + tu + we + th + fr + sa + su);
+	}
+}
+</script>
+
+	<body>
+		<div id="header-block">
+			<h1>Welcome to SHIFTED</h1>
+		</div>
+
+
+		<div id="entry-block">
+			<form>
+			<h1>This is where the magic happens</h1>
+			
+			<b>Shift Name</b>
+			<input type="text" size="17" maxlength="20" id="shiftNameInput"/>
+			<br><br>
+
+			<b>Start Time</b>
+			<input type="text" size="10" maxlength="5" id="startTimeInput"/>
+			<select name="start-time-code" id="stc">
+				<option value="AM">AM</option>
+				<option value="PM">PM</option>
+			</select>
+			<br>
+
+			<b>End Time </b>
+			<input type="text" size="10" maxlength="5" id="endTimeInput"/>
+			<select name="end-time-code" id="etc">
+				<option value="AM">AM</option>
+				<option value="PM">PM</option>
+			</select>
+			<br>
+			<br>
+			<b>Days of the Week</b><br>
+				Mon<input type="checkbox" id="mon"/>
+				Tue<input type="checkbox" id="tue"/>
+				Wed<input type="checkbox" id="wed"/>
+				Thu<input type="checkbox" id="thu"/>
+				Fri<input type="checkbox" id="fri"/>
+				Sat<input type="checkbox" id="sat"/>
+				Sun<input type="checkbox" id="sun"/>
+			<br>
+			<br>
+
+			<b>Number of Staff</b>
+			<input type="text" size="10" maxlength="3" id="staffNumberInput"/>
+			
+			<br>
+			</form>
+			<button type="button" onclick="displayResult()">Add Shift to Calender</button>
+
+		</div>
+
+	</body>
+
+</html>
