@@ -1,0 +1,2 @@
+query = GqlQuery("SELECT * FROM Employee WHERE user=:1", user)
+query = GqlQuery('SELECT * FROM Shift WHERE user=:1", user)

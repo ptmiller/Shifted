@@ -1,0 +1,23 @@
+---Use git!!!!!
+
+Next steps:
+	- Get datastore in and out going
+	- TYPE EVERYTHING!!!!!!
+	- get some math behind our algorithm
+	- be status update ready in general
+	- Prototype status by Friday... hmmm...
+		> Chris wants:
+			- Records in database
+			- Page to get things in
+			- Page that runs algorithm and spits results
+	
+Notes:
+	- It's too early to say if we're doing well...
+	- We're still behind...
+	- DEMO DAY!!!!!! GAH!!!! <-- check the website for more info
+	- check the rubric!! <-- documentation is a big part, but graded at the end, not incrementally
+		> first thing to turn in
+			- Sales pitch
+			- Tutorial
+			- Code guide (for developers)
+			- rest of it is on the website
