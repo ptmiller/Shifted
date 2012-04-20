@@ -1,19 +1,19 @@
 body {
- background-color: #8888FF;
+ background-color: #FFFFFF;
 }
 
 #header-block{
  font-family:16px Helvetica, sans-serif;
- color: #FFFFFF;
- background-color: #0000A0;
- border: 2px ridge #0000F0;
+ color: #000000;
+ background-color: #FFFFFF;
+ border: 2px ridge #FFFFFF;
 }
 
 #calender-block{
  float: left;
  width: 60%;
- background-color: FFFFFF;
- border: 2px ridge #0000F0;
+ background-color: #FFFFFF;
+ border: 2px ridge #FFFFFF;
  padding: 4px;
  margin-right: 4px;
 }
@@ -21,8 +21,14 @@ body {
 #entry-block{
  float: right;
  width: 35%;
- background-color: FFFFFF;
- border: 2px ridge #0000F0;
+ background-color: #FFFFFF;
+ border: 2px ridge #FFFFFF;
  padding: 4px;
  margin-right: 4px;
+}
+
+p.shiftcolor{
+ color: #000000;
+ font-family: 10px Helvetica, sans-seriff;
+ background-color: #B0B0B0;
 }

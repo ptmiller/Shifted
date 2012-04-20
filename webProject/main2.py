@@ -13,77 +13,117 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
+
 import webapp2
 import os
+import string
+import random
 from google.appengine.ext import db
 from google.appengine.api import rdbms
 from google.appengine.api import users
 from google.appengine.ext.webapp import template
 from google.appengine.ext.webapp.util import run_wsgi_app
+from dbModels.shift import *
+from dbModels.employee import *
+from dbModels.schedule import *
 
-class Shift(db.Model):
-    user = db.StringProperty(required=True)
-    idNum = db.StringProperty()
-    starttime = db.StringProperty(required=True)
-    startAMPM = db.StringProperty(required=True)
-    endtime = db.StringProperty(required=True)
-    endAMPM = db.StringProperty(required=True)
-    shiftName = db.StringProperty(required=True)    
-    mo = db.StringProperty()
-    tu = db.StringProperty()
-    we = db.StringProperty()
-    th = db.StringProperty()
-    fr = db.StringProperty()
-    sa = db.StringProperty()
-    su = db.StringProperty()
-    staffNum = db.StringProperty() 
-
-    def __str__(self):
-        string = """Calender Owner:  %s<br>
-                Shift ID Number: %s<br>
-                Shift Name:      %s<br>
-                Time:            %s%s - %s%s<br>
-                Days of Week:    """ % (self.user, self.idNum, self.shiftName, self.starttime, self.startAMPM, self.endtime, self.endAMPM)
-        if self.mo:
-            string = string + "Mo "
-        if self.tu:
-            string = string + "Tu "
-        if self.we:
-            string = string + "We "
-        if self.th:
-            string = string + "Th "
-        if self.fr:
-            string = string + "Fr "
-        if self.sa:
-            string = string + "Sa "
-        if self.su:
-            string = string + "Su "
-        string = string + """<br>
-            Number of Staff: %s""" % (self.staffNum)
-        return string
-
-class EmployeeM(db.Model):
-    user = db.StringProperty(required=True)
-    keyy = db.StringProperty(required=True)
-    email = db.StringProperty(required=True)
-    choices = db.StringProperty()
-    rating = db.StringProperty()
-
-    def __str__(self):
-	return "%s (%s): %s <b>%s</b>" % (self.email, self.keyy, self.choices, self.rating)
-    
-class MainHandler(webapp2.RequestHandler):
+class makeNewSchedulePage(webapp2.RequestHandler):
     def get(self):
-        user = users.get_current_user()
-        if user is None:
-            self.redirect(users.create_login_url(self.request.uri))
+        self.response.headers["Content-Type"] = "text/html"
+        self.response.out.write("""
+                <html>
+                    <head>
+                        <title>Shifted</title>
+                        <link rel="stylesheet" type="text/css" media="screen" href="beginLayout.css"/>
+                        <script type="text/javascript">
+                            function erase(id)
+                            {
+                                document.getElementById(id).select();
+                            }
+                        </script>
+                    </head>                
+                <body>
+                <center><img align="center" src="Logo1.png"/>
+                    <form action="/enterSiteNew" method="post">
+                        <input type="text" size="20" id="1" maxlength="20" name="newName" value="Schedule Name" onclick="erase(id)"/>
+                        <input type="submit" value="Make New Schedule"></input>
+                    </form>
+                    <form action="/enterSiteOld" method="post">
+                        <input type="text" size="20" id="2" maxlength="20" name="oldName" value="Schedule Name" onclick="erase(id)"/>
+                        <input type="submit" value="Get Old Schedule">
+                    </form>
+                    <form action="/enterSiteRand" method="post">
+                        <input type="submit" value="Make Anonymous Schedule">
+                    </form>
+                </center>
+                </body>
+                </html>
+                """)
+
+class enterSiteNew(webapp2.RequestHandler):
+    def post(self):
+        newKey = self.request.get("newName")
+        alreadyHere = db.GqlQuery("SELECT * from Schedule WHERE user = :1", newKey)
+        if alreadyHere.count(1) is not 0:
+            self.redirect('/nope')
+        else:
+            sched = Schedule(schedKey=newKey)
+            sched.put()
+            self.redirect("/shiftAddPage?schedId=" + newKey)
+
+class enterSiteOld(webapp2.RequestHandler):
+    def post(self):
+        oldKey = self.request.get("oldName")
+        alreadyHere = db.GqlQuery("SELECT * from Schedule WHERE user = :1", oldKey)
+        if alreadyHere.count(1) is 0:
+            self.redirect('/nope')
+        else:
+            self.redirect('/shiftAddPage?schedId=' + oldKey)
+
+class enterSiteRand(webapp2.RequestHandler):
+    def post(self):
+        randKey = "".join(random.sample(string.letters+string.digits, 8))
+        alreadyHere = db.GqlQuery("SELECT * from Schedule WHERE user = :1", randKey)
+        while alreadyHere.count(1) is not 0:
+            randKey = "".join(random.sample(string.letters+string.digits, 8))
+        sched = Schedule(schedKey=randKey)
+        sched.put()
+        self.redirect('/shiftAddPage?schedId=' + randKey)
+
+class scheduleMakeConflict(webapp2.RequestHandler):
+    def get(self):
+        self.response.headers["Content-Type"] = "text/html"
+        self.response.out.write("""
+                    <html>
+                        <head>
+                            <title>Shifted</title>
+                            <link rel="stylesheet" type="text/css" media="screen" href="beginLayout.css"/>
+                        </head>                
+                    <body>
+                        The schedule or schedule name you requested<br>
+                        is either not in our database or has already<br>
+                        been taken by another user<br><br>
+                        Please go back and try again.
+                        <form action="/">
+                            <input type="submit" value="Back">
+                        </form>
+                    </body>
+                    </html>
+                    """)
+
+
+class shiftAddPage(webapp2.RequestHandler):
+    def get(self):
+        currentSchedule = self.request.get("schedId")
+        if currentSchedule is None:
+            self.redirect('/nope')
         else:
             self.response.headers["Content-Type"] = "text/html"
             self.response.out.write("""
                 <html>
                     <head>
                         <title>Shifted</title>
+                        %s
                         <link rel="stylesheet" type="text/css" media="screen" href="layout.css"/>
                     </head>                
                 <body>
@@ -91,18 +131,17 @@ class MainHandler(webapp2.RequestHandler):
 		    <h1>Welcome to <i>SHIFTED</i></h1>
                     </div>
                     <div id="calender-block">
-                """)
-            shifts = db.GqlQuery("SELECT * from Shift ORDER BY starttime").fetch(20)
-            shifts.reverse()
+                """ % currentSchedule)
+            shifts = db.GqlQuery("SELECT * from Shift WHERE user = :1 ORDER BY starttime", currentSchedule).fetch(20)
             
             for s in shifts:
-                self.response.out.write("<p>%s</p>" % s)
+                self.response.out.write("""<p class="shiftcolor">%s</p>""" % s)
             self.response.out.write("""
                 </div>
                 <div id="entry-block">
-                <form action="/talk" method="post">
+                <form action="/addShift? method="post">
 		<h1>Enter New Shift:</h1>
-			
+		<input type="hidden" name="schedId" value="%s"/>
 		<b>Shift Name</b>
 		<input type="text" size="17" maxlength="20" name="shiftNameInput" value="name"/>
 		<br><br>
@@ -150,15 +189,14 @@ class MainHandler(webapp2.RequestHandler):
 		</div>
                 </body>
                 </html>
-                """)
+                """ % self.request.get("schedId"))
 
 class addShift(webapp2.RequestHandler):
     def post(self):
-        thing1 = users.get_current_user()
-        if thing1 is None:
-            self.redirect(users.create_login_url(self.request.uri))
+        currentSchedule = self.request.get("schedId")
+        if currentSchedule is None:
+            self.redirect('/nope')
         else:
-            user1 = thing1.nickname()
             idn = self.request.get("idNum")
             st = self.request.get("startTimeInput")
             stap = self.request.get("stc")
@@ -173,9 +211,9 @@ class addShift(webapp2.RequestHandler):
             sat = self.request.get("sat")
             sun = self.request.get("sun")
             stfn = self.request.get("staffNumberInput")
-            shft = Shift(user=user1, idNum=idn, starttime=st, startAMPM=stap, endtime=et, endAMPM=etap, shiftName=sn, mo=mon, tu=tue, we=wed, th=thu, fr=fri, sa=sat, su=sun, staffNum=stfn)
+            shft = Shift(user=currentSchedule, idNum=idn, starttime=st, startAMPM=stap, endtime=et, endAMPM=etap, shiftName=sn, mo=mon, tu=tue, we=wed, th=thu, fr=fri, sa=sat, su=sun, staffNum=stfn)
             shft.put()
-            self.redirect('/')
+            self.redirect("/shiftAddPage?schedId=" + currentSchedule)
 
 class newEmployee(webapp2.RequestHandler):
     def get(self):
@@ -196,16 +234,16 @@ class newEmployee(webapp2.RequestHandler):
                     </div>
                     <div id="calender-block">
                 """)
-            employees = db.GqlQuery("SELECT * from EmployeeM ORDER BY email").fetch(20)
+            employees = db.GqlQuery("SELECT * from Employee ORDER BY email").fetch(20)
             
             for e in employees:
-                self.response.out.write("<p>%s</p>" % e)
+                self.response.out.write("""<p class="shiftcolor">%s</p>""" % e)
             self.response.out.write("""
                 </div>
                 <div id="entry-block">
                 <form action="/addPerson" method="post">
 		<h1>Add New Employee:</h1>
-			
+		<p>Soon to be implemented: a delete feature! :D</p>	
 		<b>Key</b>
 		<input type="text" size="17" maxlength="20" name="ekey" value="ABC"/>
 		<br><br>
@@ -239,13 +277,18 @@ class addEmployee(webapp2.RequestHandler):
             email1 = self.request.get("eemail")
             choices1 = self.request.get("ch")
             rating1 = self.request.get("rtn")
-            emp = EmployeeM(user=user1, keyy=key1, email=email1, choices=choices1, rating=rating1)
+            emp = Employee(user=user1, keyy=key1, email=email1, choices=choices1, rating=rating1)
             emp.put()
             self.redirect('/addPersonel')
 
 
-app = webapp2.WSGIApplication([('/', MainHandler),
-                               ('/talk', addShift),
+app = webapp2.WSGIApplication([('/', makeNewSchedulePage),
+                               ('/nope', scheduleMakeConflict),
+                               ('/enterSiteNew', enterSiteNew),
+                               ('/enterSiteOld', enterSiteOld),
+                               ('/enterSiteRand', enterSiteRand),
+                               ('/shiftAddPage', shiftAddPage),
+                               ('/addShift', addShift),
                                ('/addPersonel', newEmployee),
                                ('/addPerson', addEmployee)],
                               debug=True)

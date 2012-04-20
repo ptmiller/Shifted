@@ -13,8 +13,12 @@ handlers:
   static_files: static/\1
   upload: static/(.*\.css)
 
+- url: /(.*\.png)
+  static_files: images/\1
+  upload: images/(.*\.png)
+
 - url: /.*
-  script: main2.app
+  script: version3.app
 
 libraries:
 - name: webapp2
