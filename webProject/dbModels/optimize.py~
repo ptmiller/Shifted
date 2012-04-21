@@ -1,0 +1,6 @@
+# what up haters?
+
+# draconian algorithm
+def optimize(employees, shifts):
+    # repeating steps until all of the shifts have been allocated
+    
