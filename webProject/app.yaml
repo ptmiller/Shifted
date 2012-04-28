@@ -17,8 +17,12 @@ handlers:
   static_files: images/\1
   upload: images/(.*\.png)
 
+- url: /(.*\.js)
+  static_files: jQuery/js/\1
+  upload: jQuery/js/(.*\.js)
+
 - url: /.*
-  script: version3.app
+  script: version4.app
 
 libraries:
 - name: webapp2

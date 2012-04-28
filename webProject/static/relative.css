@@ -1,0 +1,18 @@
+body {
+ background-color: #FFFFFF;
+}
+
+#master-block{
+ float:center;
+ width:100%;
+ background-color: #FFFFF0;
+ border: 2px ridge #FFFFFF;
+ padding: 4px;
+}
+.master-block .calender-block{
+ float:right;
+ width:100px;
+ background-color: #999999;
+ border: 2px ridge #FFFFFF;
+ padding: 4px;
+}

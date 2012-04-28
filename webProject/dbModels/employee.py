@@ -9,5 +9,5 @@ class Employee(db.Model):
     rating = db.StringProperty()
 
     def __str__(self):
-	return "%s (%s): %s <b>%s</b>" % (self.email, self.keyy, self.choices, self.rating)
-    
+		return "%s (%s): %s <b>%s</b>" % (self.email, self.keyy, self.choices, self.rating)
+

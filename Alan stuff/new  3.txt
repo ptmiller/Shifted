@@ -1,0 +1,6 @@
+a website like reddit, uses CAS, post about princeton, get's upvoted and downvoted.
+
+like above, except just advice for the incoming freshmen
+	sort by date, upvotes, - what would we call it...
+
+profs put course materials in a zip files, get it all at once

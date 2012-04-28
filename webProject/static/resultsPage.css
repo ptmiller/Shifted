@@ -1,0 +1,27 @@
+body {
+ background-color: #FFFFFF;
+}
+
+#shift-block{
+ float: left;
+ width: 45%;
+ background-color: #FFFFFF;
+ border: 2px ridge #FFFFFF;
+ padding: 4px;
+ margin-right: 4px;
+}
+
+#emp-block{
+ float: right;
+ width: 45%;
+ background-color: #FFFFFF;
+ border: 2px ridge #FFFFFF;
+ padding: 4px;
+ margin-right: 4px;
+}
+
+p.color{
+ color: #000000;
+ font-family: 10px Helvetica, sans-seriff;
+ background-color: #B0B0B0;
+}

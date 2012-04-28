@@ -1,2 +1,9 @@
 query = GqlQuery("SELECT * FROM Employee WHERE user=:1", user)
+for emp in query
+	employees.append(emp)
+# end for
+
 query = GqlQuery('SELECT * FROM Shift WHERE user=:1", user)
+for shift in query
+	shifts.append(shift)
+# end for

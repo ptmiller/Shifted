@@ -73,6 +73,18 @@ class enterSiteNew(webapp2.RequestHandler):
         sched.put()
 
         self.redirect("/shiftAddPage?schedId=" + sched.schedKey)
+
+class parseDigits(webapp2.RequestHandler):
+    def post(self):
+        digits = self.request.get("schedId")
+	query = db.GqlQuery("SELECT * FROM * WHERE id=:1", digits)
+	self.response.headers["Content-Type"] = "text/html"
+        self.response.out.write("""
+		<html>
+            <head>
+				<title>""" + stuff + """</title>
+            </head> 
+		</html>""")
 		
 class enterSiteOld(webapp2.RequestHandler):
     def post(self):
@@ -87,7 +99,7 @@ class enterSiteRand(webapp2.RequestHandler):
     def post(self):
 	randKey = "".join(random.sample(string.letters+string.digits, 8))
         alreadyHere = db.GqlQuery("SELECT * from Schedule WHERE schedKey = :1", randKey)
-        while alreadyHere.count() is not 0:
+        while alreadyHere.count() is True:
             randKey = "".join(random.sample(string.letters+string.digits, 8))
             alreadyHere = db.GqlQuery("SELECT * from Schedule WHERE schedKey = :1", randKey)
         sched = Schedule(schedKey=randKey, schedName=randKey)
@@ -259,6 +271,33 @@ class addShift(webapp2.RequestHandler):
             shft = Shift(user=sched, idNum="".join(random.sample(string.letters+string.digits, 5)), starttime=st, startAMPM=stap, endtime=et, endAMPM=etap, shiftName=sn, day="Sun", staffNum=stfN)
             shft.put()
         self.redirect('/shiftAddPage?schedId=' + sched)
+		
+class addEmployee(webapp2.RequestHandler):
+    def get(self):
+	nkeyy = "".join(random.sample(string.letters+string.digits, 5))
+	choiceString = self.request.get("choices")
+	choices = string.split(choiceString, ",")
+	nEmp = Employee(user=self.request.get("schedId"), keyy=nkeyy, email=self.request.get("email"))
+	nEmp.put()
+	self.redirect('/empThanksPage?schedId=' + schedId + '&empId=' + nkeyy)
+
+class empThanksPage(webapp2.RequestHandler):
+    def get(self):
+	sched = self.request.get("schedId")
+	emp = self.request.get("empId")
+	urlS = "http://zshiftedz.appspot.com/employeePreferencesPage?schedId=" + sched + "&empId" + emp
+	self.response.out.write("""
+        <html>
+            <head>
+                <title>Shifted</title>
+            </head>
+            <body>
+                <h1>Thank you for your response !</hi><br clear="both />
+                <p>Keep the following url to update your preferences at any time:</P><br>
+                <a href=%s>%s
+            </body>
+        </html>""" % (urlS,urlS))
+#
         
 class employeePreferencesPage(webapp2.RequestHandler):
     def get(self):
@@ -273,14 +312,14 @@ class employeePreferencesPage(webapp2.RequestHandler):
 				<html lang="en">
 					<head>
 						<meta charset="utf-8">
-						<title>Shifted: Enter your shift preferences</title>
-						<link   rel="stylesheet" href="jquery.ui.all.css">
-						<script src="jquery-1.7.2.js"></script>
-						<script src="jquery.ui.core.js"></script>
-						<script src="jquery.ui.widget.js"></script>
-						<script src="jquery.ui.mouse.js"></script>
-						<script src="jquery.ui.sortable.js"></script>
-						<link rel="stylesheet" href="demos.css">
+						<title>Shifted:: Enter your shift preferences</title>
+						<link rel="stylesheet" href="./jQuery/development-bundle/themes/base/jquery.ui.all.css">
+						<script src="./jQuery/development-bundle/jquery-1.7.2.js"></script>
+						<script src="./jQuery/development-bundle/ui/jquery.ui.core.js"></script>
+						<script src="./jQuery/development-bundle/ui/jquery.ui.widget.js"></script>
+						<script src="./jQuery/development-bundle/ui/jquery.ui.mouse.js"></script>
+						<script src="./jQuery/development-bundle/ui/jquery.ui.sortable.js"></script>
+						<link rel="stylesheet" href="./jQuery/development-bundle/demos.css">
 						<style>
 						.column { width: 270px; float: left; padding-bottom: 100px; }
 						.hhh {width: 270px; float: left; }
@@ -288,8 +327,8 @@ class employeePreferencesPage(webapp2.RequestHandler):
 						.portlet-header { margin: 0.3em; padding-bottom: 4px; padding-left: 0.2em; }
 						.portlet-header .ui-icon { float: right; }
 						.portlet-content { padding: 0.4em; }
-						.ui-sortable-placeholder { border: 1px dotted black; visibility: visible !important; height: 50px !important;}
-						.ui-sortable-placeholder * { visibility: hidden; } </style>
+						.ui-sortable-placeholder { border: 1px dotted black; visibility: visible !important; height: 50px !important; }
+						.ui-sortable-placeholder * { visibility: hidden; }	</style>
 						<script>
 						$(function() {
 							$( ".column" ).sortable({
@@ -314,9 +353,14 @@ class employeePreferencesPage(webapp2.RequestHandler):
 							var input = document.getElementById("List2");
 							var email = document.getElementById("1");
 							var name = document.getElementById("2");
+							var schedId = document.getElementById("sc")
 							var result = $('#List2').sortable("toArray"); 
-							alert("Shifts: " + result.toString() + "\nE-mail: " + email.value + "\nName: " + name.value);
-							<!-- if sched id is given in url, make a new employee. if employee id is given, update -->
+							<!-- alert("Shifts: " + result.toString() + "\nE-mail: " + email.value + "\nName: " + name.value); -->
+							window.location("http://zshiftedz.appspot.com/addEmployee?schedId=" + schedId + "&email=" + email + "&choices=" + result.toString())
+							<!-- if sched id is given in url, make a new employee. -->
+							<!-- addEmployee(schedId, result, email.value, name.value) -->
+							
+							<!-- if employee id is given, update -->
 							<!-- enter shifts into employee by id -->
 							<!-- enter name into employee -->
 							<!-- enter email into employee -->
@@ -344,7 +388,7 @@ class employeePreferencesPage(webapp2.RequestHandler):
 
             schedQ = db.GqlQuery("SELECT * FROM Schedule WHERE schedKey=:1", currentSchedule)
             schedK = 0
-            shiftQ = None
+            #shiftQ = None
             for sc in schedQ:
                 schedK = sc.schedKey
                 shiftQ = db.GqlQuery("SELECT * FROM Shift WHERE user=:1", schedK)
@@ -363,11 +407,12 @@ class employeePreferencesPage(webapp2.RequestHandler):
 									<br>
 									<input type="text" size="20" id="2" maxlength="50" name="name_field" value="Enter your name" onclick="erase(id)"/>
 									<br>
-									<button type="button" onclick="button_click()" class='s_button'>Submit</button>
+									<input type="hidden" value="%s" name="schedId"></input>
+									<button type="button" onclick="button_click()">Submit</button>
 								</form>
 							</div>
 						</body>
-					</html>""")
+					</html>""" % currentSchedule)
 				#
             else:
 		empQ = db.GqlQuery("SELECT * FROM Employee WHERE keyy=:1", currentEmployee)
@@ -380,8 +425,8 @@ class employeePreferencesPage(webapp2.RequestHandler):
                             #
 			#
                         if (skip == False):
-			    self.response.out.write("""<div class="portlet" id="%s">\n""", sh.idNum)
-                            self.response.out.write("""<div class="portlet-header">%s</div>\n""", sh.shiftName)
+			    self.response.out.write("""<div class="portlet" id="%s">\n""" % sh.idNum)
+                            self.response.out.write("""<div class="portlet-header">%s</div>\n""" % sh.shiftName)
                             self.response.out.write("""<div class="portlet-content">This feature has not yet been implemented</div>\n""")
                             self.response.out.write("""</div>\n""")
                         #
@@ -389,8 +434,8 @@ class employeePreferencesPage(webapp2.RequestHandler):
 		    for ds in e.choices:
                         shQ = db.GqlQuery("SELECT * FROM Shift WHERE idNum=:1", ds)
                         for s in shQ:
-                            self.response.out.write("""<div class="portlet" id="%s">\n""", s.idNum)
-                            self.response.out.write("""<div class="portlet-header">%s</div>\n""", s.shiftName)
+                            self.response.out.write("""<div class="portlet" id="%s">\n""" % s.idNum)
+                            self.response.out.write("""<div class="portlet-header">%s</div>\n""" % s.shiftName)
 			    self.response.out.write("""<div class="portlet-content">This feature has not yet been implemented</div>\n""")
 			    self.response.out.write("""</div>\n""")
                         #
@@ -401,21 +446,21 @@ class employeePreferencesPage(webapp2.RequestHandler):
 								<div id="user_info">
 									<form>
 										<input type="text" size="20" id="1" maxlength="50" name="email_field" value=%s onclick="erase(id)"/>
-										<br>""", e.email)
+										<br>""" % e.email)
 		    self.response.out.write("""<input type="text" size="20" id="2" maxlength="50" name="name_field" value="Enter your name" onclick="erase(id)"/>
 										<br>
-										<button type="button" onclick="button_click()" class='s_button'>Submit</button>
+										<input type="hidden" value="%s" name="schedId" id="sc"></input>
+                                                                                <button type="button" onclick="button_click()">Submit</button>
 									</form>
 								</div>
 							</body>
-						</html>""")
+						</html>""" % currentSchedule)
 					#
 				#
 			#
 		#
 	#
 #
-
 
 class results(webapp2.RequestHandler):
     def post(self):
@@ -571,6 +616,7 @@ app = webapp2.WSGIApplication([('/', makeNewSchedulePage),
                                ('/thankYouPage', thankYouPage),
                                ('/Optimize', Optimize),
                                ('/results', results),
+                               ('/empThanksPage', empThanksPage),
                                ('/parseDigits', parseDigits)],
                                debug=True)
 

@@ -1,51 +1,91 @@
+<!DOCTYPE html>
 <html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>Shifted:: Enter your shift preferences</title>
+		<link rel="stylesheet" href="./jQuery/development-bundle/themes/base/jquery.ui.all.css">
+		<script src="./jQuery/development-bundle/jquery-1.7.2.js"></script>
+		<script src="./jQuery/development-bundle/ui/jquery.ui.core.js"></script>
+		<script src="./jQuery/development-bundle/ui/jquery.ui.widget.js"></script>
+		<script src="./jQuery/development-bundle/ui/jquery.ui.mouse.js"></script>
+		<script src="./jQuery/development-bundle/ui/jquery.ui.sortable.js"></script>
+		<link rel="stylesheet" href="./jQuery/development-bundle/demos.css">
+		<style>
+		.column { width: 270px; float: left; padding-bottom: 100px; }
+		.hhh {width: 270px; float: left; }
+		.portlet { margin: 0 0.5em 0.5em 0; }
+		.portlet-header { margin: 0.3em; padding-bottom: 4px; padding-left: 0.2em; }
+		.portlet-header .ui-icon { float: right; }
+		.portlet-content { padding: 0.4em; }
+		.ui-sortable-placeholder { border: 1px dotted black; visibility: visible !important; height: 50px !important; }
+		.ui-sortable-placeholder * { visibility: hidden; }	</style>
+		<script>
+		$(function() {
+			$( ".column" ).sortable({
+				connectWith: ".column"
+			});
 
-<head>
+			$( ".portlet" ).addClass( "ui-widget ui-widget-content ui-helper-clearfix ui-corner-all" )
+				.find( ".portlet-header" )
+					.addClass( "ui-widget-header ui-corner-all" )
+					.prepend( "<span class='ui-icon ui-icon-plusthick'></span>")
+					.end()
+				.find( ".portlet-content" ).toggle();
+				
+			$( ".portlet-header .ui-icon" ).click(function() {
+				$( this ).toggleClass( "ui-icon-minusthick" ).toggleClass( "ui-icon-plusthick" );
+				$( this ).parents( ".portlet:first" ).find( ".portlet-content" ).toggle();
+			});
 
-	<meta charset="utf-8">
-
-	<title>jQuery UI Draggable + Sortable</title>
-
-	<link rel="stylesheet" 						href="jQuery/development-bundle/themes/base/jquery.ui.all.css">
-
-	<script src="jQuery/development-bundle/jquery-1.7.2.js"></script>
-	<script src="jQuery/development-bundle/ui/jquery.ui.core.js"></script>
-	<script src="jQuery/development-bundle/ui/jquery.ui.widget.js"></script>
-	<script src="jQuery/development-bundle/ui/jquery.ui.mouse.js"></script>
-	<script src="jQuery/development-bundle/ui/jquery.ui.draggable.js"></script>
-	<script src="jQuery/development-bundle/ui/jquery.ui.sortable.js"></script>
-
-	<link rel="stylesheet" href="jQuery/development-bundle/demos/demos.css">
-
-	<style>
-	.demo ul { list-style-type: none; margin: 0; padding: 0; margin-bottom: 10px; }
-	.demo li { margin: 5px; padding: 5px; width: 150px; }
-	</style>
-
-	<script>
-	$(function() {
-		$( "#sortable" ).sortable({
-			revert: true
+			$( ".column" ).disableSelection();
 		});
-		$( "ul, li" ).disableSelection();
-	});
-	</script>
-
-</head>
-
-<body>
-
-<div class="demo">
-<ul id="sortable">
-	<li class="ui-state-default">Item 1</li>
-	<li class="ui-state-default">Item 2</li>
-	<li class="ui-state-default">Item 3</li>
-	<li class="ui-state-default">Item 4</li>
-	<li class="ui-state-default">Item 5</li>
-</ul>
-
-</div><!-- End demo -->
-
-</body>
-
+		function button_click() {
+			var input = document.getElementById("List2");
+			var email = document.getElementById("1");
+			var name = document.getElementById("2");
+			var result = $('#List2').sortable("toArray"); 
+			alert("Shifts: " + result.toString() + "\nE-mail: " + email.value + "\nName: " + name.value);
+			<!-- if sched id is given in url, make a new employee. if employee id is given, update -->
+			<!-- enter shifts into employee by id -->
+			<!-- enter name into employee -->
+			<!-- enter email into employee -->
+			<!-- redirect to thank-you page with link to update these prefs -->
+		}
+		function erase(id) {
+			document.getElementById(id).select();
+		}
+		</script>
+	</head>
+	<body>
+		<div id="header-block">
+		    <h1>Welcome to <i>SHIFTED</i><br clear="both" /></h1>
+        </div>
+		<div id="columns">
+			<div class="hhh" id="header1">
+				<h2>All Shifts</h2>
+			</div>
+			<div class="hhh" id="header2">
+				<h2>Desired Shifts</h2>
+			</div>
+			<br clear="both" />
+			<div class="column" id="List1">
+				<!-- if an employee id is given, use the employee. if a schedule id is given, use sched -->
+				<!-- run a for loop, for each shift in the above, print one of these -->
+				<div class="portlet" id="S1"><!-- id should be shift id -->
+					<div class="portlet-header"><!-- name should be shift name -->Shift1</div>
+					<div class="portlet-content"><!-- should be shift description -->This info should be pulled from the database.</div>
+				</div>
+			</div>
+			<div class="column" id="List2"></div>
+		</div>
+		<div id="user_info">
+			<form>
+				<input type="text" size="20" id="1" maxlength="50" name="email_field" value="Enter your e-mail" onclick="erase(id)"/>
+				<br>
+				<input type="text" size="20" id="2" maxlength="50" name="name_field" value="Enter your name" onclick="erase(id)"/>
+				<br>
+				<button type="button" onclick="button_click()" class='s_button'>Submit</button>
+			</form>
+		</div>
+	</body>
 </html>

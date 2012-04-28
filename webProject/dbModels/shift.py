@@ -14,7 +14,7 @@ class Shift(db.Model):
 
     def __str__(self):
         string = """
-            %s: %s %s%s - %s%s""" % (self.idNum, self.day, self.starttime, self.startAMPM, self.endtime, self.endAMPM)
+            %s: %s %s%s - %s%s""" % (self.shiftName, self.day, self.starttime, self.startAMPM, self.endtime, self.endAMPM)
         string = string + """<br>
             Number of Staff: %s""" % (self.staffNum)
         return string

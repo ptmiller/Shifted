@@ -1,0 +1,13 @@
+NOTES!!!!!!
+
+
+Right now we can:
+	make schedules: new, with a name
+	retrieve old ones
+	add and delete shifts
+	need to connect ui
+	
+for beta test: get pieces together
+	- just sit down and use it. no trouble. DO IT
+	
+NO questions.
